@@ -1,0 +1,79 @@
+= Operating Systems and Cloud Environments
+:page-aliases: official-support
+
+[abstract]
+Sync Gateway is supported on several popular operating systems and virtual environments.
+
+== Supported Versions
+
+Make sure that your chosen operating system or cloud environment is listed in one of the following tables before you install Sync Gateway.
+See the <<deprecated-versions>> section for information about platform support changes, including deprecated platforms.
+
+IMPORTANT: Sync Gateway clusters on mixed platforms are not supported.
+Nodes in a Sync Gateway cluster should all be running on the same OS, and every effort should be made to apply the same OS patches across the entire cluster.
+
+.Supported Operating Systems for Development, Testing, and Production
+[cols="100,135",options="header"]
+|===
+| Operating System | Supported Versions
+| Red Hat Enterprise Linux (RHEL)
+| 7.x
+
+| CentOS
+| 7.x
+
+| Ubuntu
+| 16.04 LTS
+
+| Debian
+| 8.x
+
+| Windows Server
+| 2010
+
+2012 (64-bit)
+
+2016 (64-bit)
+|===
+
+.Supported Cloud Environments for Development, Testing, and Production
+[cols="100,135",options="header"]
+|===
+| Operating System | Supported Versions
+|Amazon Linux AMI
+|2017.09
+
+2018.03
+|Docker (Docker Hub)
+|CentOS 7
+
+|OpenShift (RedHat Portal)
+|RHEL 7.2
+|===
+
+.Supported Operating Systems for Development and Testing Only
+[cols="100,135",options="header"]
+|===
+| Operating System | Supported Versions
+
+| macOS
+| 10.12.6 "High Sierra"
+|===
+
+== Deprecated Versions
+
+Deprecated versions will be removed in a future release and we recommend that you plan to migrate away from the deprecated OS versions.
+
+.Deprecated Operating Systems
+[cols="100,135",options="header"]
+|===
+| Operating System | Supported Versions
+| Red Hat Enterprise Linux (RHEL)
+| 6.x
+
+| CentOS
+| 6.x
+
+| Ubuntu
+| 14.04 LTS
+|===

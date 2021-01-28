@@ -31,27 +31,69 @@ The RBAC user credentials will be used in a later section to start Sync Gateway.
 . Open the *Security* tab and click the *Add User* button.
 +
 image::create-user.png[]
-
-. The steps to create the RBAC user differ slightly depending on the version of Couchbase Server that you have installed. We explain the differences below.
 +
+Couchbase Server opens the _Add New User_ dialog.
+
+. Create the RBAC user with appropriate access roles.
++
+In the _Add New User_ window, provide a *Username* and *Password*; the credentials to be used by Sync Gateway to connect.
++
+Note that the role details differ, depending on your Couchbase Server version -- see <<rbac-roles>>.
++
+[#rbac-roles]
+.Select RBAC roles
+=====
+
 [{tabs}]
 ====
-Couchbase Server 5.5 or above::
+Couchbase Server 6.6+::
 +
-In the pop-up window, provide a *Username* and *Password*, those credentials will be used by Sync Gateway to connect later on.
-Next, you must grant RBAC roles to that user.
-If you are using Couchbase Server 5.5, you must enable the *Application Access* and *Read Only Admin* roles.
+--
+. In the pop-up window, provide
+** A Username (`sync_gateway`)
+** A Password (`password`).
+
+. Assign the _Sync Gateway_ role to the user
 +
-image::user-settings-5-5.png[]
+xref:server:learn:security/roles.adoc#sync-gateway[Sync Gateway RBAC Role Description]
++
+image::user-settings-6-6.png[,450]
+
++
+NOTE: Users are encouraged to move away from using the _Application Access_ and _Read-Only Admin_ roles for this purpose.
+
+--
+
+Couchbase Server 5.5 - 6.5::
++
+--
+. In the pop-up window, provide:
+** A Username (`sync_gateway`)
+** A Password (`password`).
+
+. Assign these RBAC roles to the user(as shown on the image below):
+
+** Application Access
+** Read Only Admin
++
+image::user-settings-5-5.png[,450]
+--
 
 Couchbase Server 5.1::
 +
-In the pop-up window, provide a *Username* and *Password*, those credentials will be used by Sync Gateway to connect later on.
-Next, you must grant RBAC roles to that user.
-If you are using Couchbase Server 5.1, you must enable the *Bucket Full Access* and *Read Only Admin* roles.
-+
-image::user-settings.png[]
+--
+. In the pop-up window, provide:
+** A Username (`sync_gateway`)
+** A Password* (`password`).
+
+. Assign these RBAC roles to the user:
+** Bucket Full Access
+** Read Only Admin
+
+image::user-settings.png[,450]
+--
 ====
+=====
 
 === Network access
 
@@ -197,6 +239,8 @@ Sync Gateway runs as a service (reachable on `+http://localhost:4985+`). To stop
 macOS::
 +
 --
+macOS is supported only for development and test environments (see xref:supported-os.adoc#supported-versions[Supported OS]).
+
 Download Sync Gateway from the {url-downloads}#couchbase-mobile[Couchbase downloads page] or using the `wget`.
 
 [source,bash,subs="attributes"]
@@ -266,7 +310,6 @@ The configuration file and logs are located in `/Users/sync_gateway`.
 --
 ====
 
-The following sections describe how to install and configure Sync Gateway to run with Couchbase Server.
 
 === Community Edition
 
@@ -475,19 +518,47 @@ The following steps explain how to connect Sync Gateway to the Couchbase Server 
 
 * Open a new file called *sync-gateway-config.json* with the following.
 +
+[{tabs}]
+====
+Default::
++
+--
 [source,javascript]
 ----
 include::{examplesdir}/getting-started/sync-gateway-config.json[]
 ----
-+
-This configuration contains important properties:
-+
+Configuration properties:
+
 <1> The user's username that you created on the Couchbase Server Admin Console.
 <2> The user's password that you created on the Couchbase Server Admin Console.
 <3> The xref:shared-bucket-access.adoc[shared bucket access] feature allows Couchbase Server SDKs to also perform operations on this bucket.
 <4> `num_index_replicas` is the number of index replicas stored in Couchbase Server, introduced with xref:indexing.adoc[GSI/N1QL indexing].
 If you're running a single Couchbase Server node for development purposes the `num_index_replicas` must be set to `0`.
+<5> *Enterprise Edition*: By default, the `delta_sync.enabled` property is disabled on Sync Gateway.
+When enabled, Couchbase Lite clients will switch to using delta sync automatically.
+Similarly, if delta sync is disabled on Sync Gateway, clients will switch to normal mode.
+This feature is described in xref:config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled].
+--
+
+With Import Filter::
 +
+--
+For clusters with a large amount of data, the initial import process can take considerable time to complete.
+Therefore, to get started with a cluster which contains a large number of pre-existing documents, we recommend to use an `import_filter` to reduce the initial import processing time.
+[source,javascript]
+----
+include::{examplesdir}/getting-started/sync-gateway-config-import-filter.json[]
+----
+Configuration properties:
+
+<1> The user's username that you created on the Couchbase Server Admin Console.
+<2> The user's password that you created on the Couchbase Server Admin Console.
+<3> The xref:shared-bucket-access.adoc[shared bucket access] feature allows Couchbase Server SDKs to also perform operations on this bucket.
+<4> `num_index_replicas` is the number of index replicas stored in Couchbase Server, introduced with xref:indexing.adoc[GSI/N1QL indexing].
+If you're running a single Couchbase Server node for development purposes the `num_index_replicas` must be set to `0`.
+<5> Only import documents which have a `type` property equal to `mobile`.
+--
+====
 * Start Sync Gateway from the command line, or if Sync Gateway is running in a service replace the configuration file and restart the service.
 +
 [source,bash]

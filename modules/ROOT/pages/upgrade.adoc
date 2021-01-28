@@ -2,6 +2,8 @@
 :idprefix:
 :idseparator: -
 
+:xref-sgw-bmk-gs-sgw-prereqs-cfg-svr: xref:sync-gateway::gs-sgw-svr-cfg.adoc[Configure Server for Sync Gateway]
+
 This page documents various implementation details and functionalities to consider when performing an upgrade to Sync Gateway {page-component-version}.
 
 == Views to GSI
@@ -28,6 +30,8 @@ To enable shared bucket on incoming documents, one Sync Gateway node in the clus
 
 Enabling shared bucket access on your existing deployment is *not* reversible.
 It is recommended to test the upgrade on a staging environment before upgrading the production environment.
+
+Known issue: enabling shared bucket access on your existing deployment if it's already running with GSI indexing will require downtime (xref:release-notes.adoc#2-5-0[known issues CBG-394]).
 | *Sync Gateway 2.1 or above*
 `num_index_replicas: 1`
 | *Sync Gateway 2.1 or above*
@@ -205,6 +209,9 @@ This will match the Development Design Document we just indexed, so will be avai
 |===
 
 == Couchbase Server
+
+NOTE: When upgrading your Couchbase Server from 4.x to 5.x, remember to create a Sync Gateway RBAC user on the server -- see: {xref-sgw-bmk-gs-sgw-prereqs-cfg-svr} -- and to include the user's credentials username/password in your Sync-Gateway-Config.json file.
+
 
 All of the different upgrade paths mentioned above assume that Couchbase Server is running a xref:compatibility-matrix.adoc[compatible version] for Sync Gateway.
 There are 3 commonly used upgrade paths for Couchbase Server.

@@ -1,12 +1,27 @@
 = Mobile-Web Data Sync
-:url-downloads: https://www.couchbase.com/downloads
 
-_(Introduced in Sync Gateway 1.5 and Couchbase Server 5.0)_
+:idprefix:
+:idseparator: -
+:pageOriginRel: "sg=1.5, Cbs=5.0)_"
+:sgw-pg-admin-rest-api: admin-rest-api.adoc
+:url-downloads: https://www.couchbase.com/downloads
+:dbName: databases-foo
+:dbNamePrefix: {dbName}_db-
+:configPage: config-properties.html
+:dbConfig: {configPage}#{dbNamePrefix}
+:xref-pfx-sgw: xref:sync-gateway::
+:xref-sgw-ep-admin-api: {xref-pfx-sgw}{sgw-pg-admin-rest-api}
+:xref-sgw-pfx-admin-api-document: {xref-sgw-ep-admin-api}#/document
+:xref-sgw-ep-admin-api-document: {xref-sgw-pfx-admin-api-document}
+:xref-sgw-pfx-admin-api-document-post-purge: {xref-sgw-ep-admin-api-document}/post__db___purge[/{db}/_purge]
+:xref-sgw-pfx-admin-api-document-put-docid: {xref-sgw-ep-admin-api-document}/put__db___doc_[/{db}/{docid}]
+
+== Shared Bucket Access
 
 Shared Bucket Access enables document changes made through Couchbase SDKs and N1QL queries to be synchronized to Couchbase Lite clients, and vice versa.
 The following diagram shows different clients (mobile, web, desktop) writing data to the same bucket in Couchbase Server.
 
-image::shared-bucket-access.svg[]
+image::shared-bucket-access.png[]
 
 In previous releases, you either had to ensure all writes happened through Sync Gateway, or had to set up bucket shadowing to ensure that the security and replication metadata needed by mobile applications was preserved.
 
@@ -49,6 +64,11 @@ Another example is presented below.
 From then on, documents can be inserted on the Server directly (with N1QL or SDKs) or through the Sync Gateway REST API.
 The mobile metadata is no longer kept in the document, but in a system extended attribute in Couchbase Server.
 
+When this feature is enabled, the REST API will include the following changes:
+
+* Purging -- {xref-sgw-pfx-admin-api-document-post-purge} removes the document and its associated extended attributes
+* Updating -- {xref-sgw-pfx-admin-api-document-put-docid} will tombstone the active revision
+
 == Reference
 
 The reference to the configuration properties can be found below.
@@ -78,11 +98,12 @@ SELECT meta().xattrs._sync FROM `travel-sample` WHERE meta().id = "mydocId"
 Prior to 5.5, there is no way to query the mobile metadata with `shared_bucket_access_enabled: true`.
 
 WARNING: The sync metadata is maintained internally by Sync Gateway and its structure can change at any time.
-It should not be used to drive business logic of applications. The direct use of the N1QL query is *unsupported* and must not be used in production environments. 
+It should not be used to drive business logic of applications. The direct use of the N1QL query is *unsupported* and must not be used in production environments.
 
 === How do I access a blob stored in Couchbase Lite?
 
-See the xref:couchbase-lite:ROOT:swift.adoc#blobs[Blob] example.
+:param-bookmark: blobs
+include::partial$blocklinks-cbl.adoc[]
 
 === How do I access an attachment from a WebApp?
 
